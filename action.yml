@@ -5,25 +5,29 @@ inputs:
   dns-server:
     description: 'DNS server to use over the VPN'
     required: true
-  test-ping-host:
-    description: 'Host IP to ping for VPN connection test, DNS names not supported, use test-dns-host instead'
-    required: false
-  tets-dns-host:
-    description: 'Internal hostname to resolve for VPN connection test'
-    required: false
   host:
     description: 'DNS or IP of OpenVPN server'
     required: true
-  port:
-    description: 'Port of OpenVPN server'
-    required: false
-    default: '443'
   username:
     description: 'VPN username'
     required: true
   password:
     description: 'VPN password'
     required: true
+  ovpn-config:
+    description: 'Path to .ovpn config'
+    require: false
+    default: '.github/vpn/config.ovpn'
+  # test-ping-ip-host:
+  #   description: 'Host IP to ping for VPN connection test, DNS names not supported, use test-dns-host instead'
+  #   required: false
+  # test-dns-host:
+  #   description: 'Internal hostname to resolve for VPN connection test'
+  #   required: false
+  port:
+    description: 'Port of OpenVPN server'
+    required: false
+    default: '443'
   otp-hex:
     description: 'OTP hex string'
     required: false
@@ -59,64 +63,31 @@ runs:
 
     - name: Setup VPN config
       run: |
-        echo "${{ secrets.VPN_CA_CRT }}" > ca.crt
-        echo "${{ secrets.VPN_CERT_CRT }}" > cert.crt
-        echo "${{ secrets.VPN_CERT_KEY }}" > cert.key
-        echo "${{ secrets.VPN_USERNAME_PASSWORD }}" > secret.txt
-        sed -i 's/AUTO_REPLACED_HOST/'"${{ secrets.VPN_HOST }}"'/g' ${{ env.OVPN_CONFIG }}
-        sed -i 's/AUTO_REPLACED_PORT/'"${{ secrets.VPN_PORT }}"'/g' ${{ env.OVPN_CONFIG }}
+        echo "${{ inputs.ca }}" > ca.crt
+        echo "${{ inputs.cert }}" > cert.crt
+        echo "${{ inputs.cert-key }}" > cert.key
+        echo "${{ inputs.username }}" > secret.txt
+        echo "${{ inputs.password }}" >> secret.txt
+        sed -i 's/AUTO_REPLACED_HOST/'"${{ inputs.host }}"'/g' ${{ inputs.ovpn-config }}
+        sed -i 's/AUTO_REPLACED_PORT/'"${{ inputs.port }}"'/g' ${{ inputs.ovpn-config }}
 
     - name: Add VPN TOTP
       env:
         VPN_OTP: ${{ secrets.VPN_OTP }}
       if: inputs.otp-hex != null
       run: |
-        OTP=$(oathtool --totp ${{ secrets.VPN_OTP }})
+        OTP=$(oathtool --totp ${{ inputs.otp-hex }})
         sed -i '$ s/$/'"$OTP"'/' secret.txt
 
     - name: Connect VPN
-      run: sudo openvpn --config ${{ env.OVPN_CONFIG }} --auth-user-pass secret.txt --log "vpn.log" --daemon
-
-    - name: Wait for a VPN connection
-      timeout-minutes: 1
-      run: until dig @${{ env.VPN_DNS_HOST }} ${{ env.VPN_DNS_HOST }} A +time=1; do sleep 2; done
+      run: sudo openvpn --config ${{ inputs.ovpn-config }} --auth-user-pass secret.txt --log "vpn.log" --daemon
 
     - name: Update resolvconf
       run: |
         sudo chmod 777 /etc/resolvconf/resolv.conf.d/head
-        sudo echo "nameserver ${{ env.VPN_DNS_HOST }}" >> /etc/resolvconf/resolv.conf.d/head
+        sudo echo "nameserver ${{ inputs.dns-server }}" >> /etc/resolvconf/resolv.conf.d/head
         sudo resolvconf -u
 
-    - name: Configure SSH keys
-      run: |
-        echo "${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}" >  .ssh/ansible_id_rsa
-        echo "${{ secrets.ANSIBLE_SSH_PUBLIC_KEY }}" >  .ssh/ansible_id_rsa.pub
-        sudo chmod -R 700 .ssh/
-
-    - name: Run Anisble Playbook
-      uses: dawidd6/action-ansible-playbook@v2
-      with:
-        playbook: master.yml
-        key: ${{secrets.ANSIBLE_SSH_PRIVATE_KEY}}
-        requirements: requirements.yml
-        options: |
-          --inventory inventory
-          --verbose
-          --limit "dkapl01"
-          --check
-
-    - name: Kill VPN connection
-      if: always()
-      run: sudo killall openvpn
-
-    - name: Publish VPN log
-      if: always()
-      run: sudo chmod 777 vpn.log
-
-    - name: Upload VPN logs
-      uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: VPN logs
-        path: vpn.log
-
+    - name: Wait for a VPN connection
+      timeout-minutes: 1
+      run: until dig @${{ inputs.dns-server }} ${{ inputs.dns-server }} A +time=1; do sleep 2; done
