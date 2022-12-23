@@ -60,6 +60,7 @@ runs:
       run: |
         sudo apt update
         sudo apt --assume-yes --no-install-recommends install openvpn oathtool resolvconf
+      shell: bash
 
     - name: Setup VPN config
       run: |
@@ -70,6 +71,7 @@ runs:
         echo "${{ inputs.password }}" >> secret.txt
         sed -i 's/AUTO_REPLACED_HOST/'"${{ inputs.host }}"'/g' ${{ inputs.ovpn-config }}
         sed -i 's/AUTO_REPLACED_PORT/'"${{ inputs.port }}"'/g' ${{ inputs.ovpn-config }}
+      shell: bash
 
     - name: Add VPN TOTP
       env:
@@ -78,16 +80,20 @@ runs:
       run: |
         OTP=$(oathtool --totp ${{ inputs.otp-hex }})
         sed -i '$ s/$/'"$OTP"'/' secret.txt
+      shell: bash
 
     - name: Connect VPN
       run: sudo openvpn --config ${{ inputs.ovpn-config }} --auth-user-pass secret.txt --log "vpn.log" --daemon
+      shell: bash
 
     - name: Update resolvconf
       run: |
         sudo chmod 777 /etc/resolvconf/resolv.conf.d/head
         sudo echo "nameserver ${{ inputs.dns-server }}" >> /etc/resolvconf/resolv.conf.d/head
         sudo resolvconf -u
+      shell: bash
 
     - name: Wait for a VPN connection
       timeout-minutes: 1
       run: until dig @${{ inputs.dns-server }} ${{ inputs.dns-server }} A +time=1; do sleep 2; done
+      shell: bash

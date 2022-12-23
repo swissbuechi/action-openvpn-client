@@ -30,7 +30,7 @@ jobs:
           cert-key: ${{ secrets.VPN_CERT_CRT_KEY }}
 
       - name: Test Ping
-        run: ping ${{ env.VPN_DNS_HOST }} -c5  
+        run: ping ${{ env.VPN_DNS_HOST }} -c5
         
       - name: Test DNS
         run: dig dreikom.local
