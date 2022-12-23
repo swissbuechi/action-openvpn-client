@@ -1,4 +1,4 @@
-name: Deploy Playbook
+name: Test VPN
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ env:
   VPN_DNS_SERVER: 10.33.33.1
 
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Connect VPN
-        uses: swissbuechi/action-openvpn-client@v0.1
+        uses: swissbuechi/action-openvpn-client@v.0.1.0-alpha
         with:
           host: ${{ secrets.VPN_HOST }}
           username: ${{ secrets.VPN_USERNAME }}
