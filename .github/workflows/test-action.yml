@@ -46,6 +46,6 @@ jobs:
           name: VPN logs
           path: vpn.log
 
-        - name: Kill VPN connection
-          if: always()
-          run: sudo killall openvpn
+      - name: Kill VPN connection
+        if: always()
+         run: sudo killall openvpn
