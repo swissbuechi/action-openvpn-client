@@ -1,5 +1,9 @@
-# Container Action Template
+# Connect to OpenVPN SSL Server GitHub Action
 
-To get started, click the `Use this template` button on this repository [which will create a new repository based on this template](https://github.blog/2019-06-06-generate-new-repositories-with-repository-templates/).
+An GitHub Action for connecting to an OpenVPN SSL Server.
+Only works on ubuntu runner.
 
-For info on how to build your first Container action, see the [toolkit docs folder](https://github.com/actions/toolkit/blob/master/docs/container-action.md).
+## Usage
+
+```yaml
+```
