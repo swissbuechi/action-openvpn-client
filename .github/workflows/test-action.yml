@@ -48,4 +48,4 @@ jobs:
 
       - name: Kill VPN connection
         if: always()
-         run: sudo killall openvpn
+        run: sudo killall openvpn
