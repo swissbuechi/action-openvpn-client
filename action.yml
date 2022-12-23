@@ -1,12 +1,57 @@
-name: 'Container Action Template'
-description: 'Get started with Container actions'
-author: 'GitHub'
-inputs: 
-  myInput:
-    description: 'Input to use'
-    default: 'world'
+name: 'Connect OpenVPN'
+description: 'A GitHub Action for connecting to an OpenVPN SSL server '
+inputs:
+  dns-server:
+    description: 'DNS server to use over the VPN'
+    required: true
+  test-ping-host:
+    description: 'Host IP to ping for VPN connection test, DNS names not supported, use test-dns-host instead'
+    required: false
+  tets-dns-host:
+    description: 'Internal hostname to resolve for VPN connection test'
+    required: false
+  host:
+    description: 'DNS or IP of OpenVPN server'
+    required: true
+  port:
+    description: 'Port of OpenVPN server'
+    required: false
+    default: '443'
+  username:
+    description: 'VPN username'
+    required: true
+  password:
+    description: 'VPN password'
+    required: true
+  otp-hex:
+    description: 'OTP hex string'
+    required: false
+  otp-timezone:
+    description: 'Timezone for OTP'
+    required: false
+    default: 'GMT'
+  ca:
+    description: 'VPN config CA'
+    required: false
+  cert:
+    description: 'VPN config Cert'
+    required: false
+  cert-key:
+    description: 'VPN config Cert Key'
+    required: false
+outputs:
+  random-number:
+    description: "Random number"
+    value: ${{ steps.random-number-generator.outputs.random-number }}
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
-  args:
-    - ${{ inputs.myInput }}
+  using: "composite"
+  steps:
+    - run: echo Hello ${{ inputs.who-to-greet }}.
+      shell: bash
+    - id: random-number-generator
+      run: echo "random-number=$(echo $RANDOM)" >> $GITHUB_OUTPUT
+      shell: bash
+    - run: echo "${{ github.action_path }}" >> $GITHUB_PATH
+      shell: bash
+    - run: goodbye.sh
+      shell: bash
