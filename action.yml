@@ -74,8 +74,6 @@ runs:
       shell: bash
 
     - name: Add VPN TOTP
-      env:
-        VPN_OTP: ${{ secrets.VPN_OTP }}
       if: inputs.otp-hex != null
       run: |
         OTP=$(oathtool --totp ${{ inputs.otp-hex }})
@@ -94,6 +92,6 @@ runs:
       shell: bash
 
     - name: Wait for a VPN connection
-      timeout-minutes: 1
+      # timeout-minutes: 1
       run: until dig @${{ inputs.dns-server }} ${{ inputs.dns-server }} A +time=1; do sleep 2; done
       shell: bash
