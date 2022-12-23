@@ -27,7 +27,7 @@ jobs:
           dns-server: ${{ env.VPN_DNS_SERVER }}
           ca: ${{ secrets.VPN_CA_CRT }}
           cert: ${{ secrets.VPN_CERT_CRT }}
-          cert-key: ${{ secrets.VPN_CERT_CRT_KEY }}
+          cert-key: ${{ secrets.VPN_CERT_KEY }}
 
       - name: Test Ping
         run: ping ${{ env.VPN_DNS_HOST }} -c5

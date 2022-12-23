@@ -92,6 +92,5 @@ runs:
       shell: bash
 
     - name: Wait for a VPN connection
-      # timeout-minutes: 1
-      run: until dig @${{ inputs.dns-server }} ${{ inputs.dns-server }} A +time=1; do sleep 2; done
+      run: timeout 60 until dig @${{ inputs.dns-server }} ${{ inputs.dns-server }} A +time=1; do sleep 2; done || exit 1
       shell: bash
