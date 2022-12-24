@@ -29,7 +29,7 @@ jobs:
 #          cert: ${{ secrets.VPN_CERT_CRT }}
 #          cert-key: ${{ secrets.VPN_CERT_KEY }}
           test-ping-ip-host: ${{ env.VPN_DNS_SERVER }}
-#          test-dns-host: google.ch
+          test-dns-host: google.ch
 
       - name: Test Ping
         run: ping ${{ env.VPN_DNS_SERVER }} -c5
