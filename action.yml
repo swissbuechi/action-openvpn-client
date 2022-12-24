@@ -56,33 +56,33 @@ runs:
         timezoneLinux: ${{ inputs.otp-timezone }}
       if: inputs.otp-timezone != null
 
-    - name: Install OpenVPN
-      run: |
-        sudo apt update
-        sudo apt --assume-yes --no-install-recommends install openvpn oathtool resolvconf
-      shell: bash
+#    - name: Install OpenVPN
+#      run: |
+#        sudo apt update
+#        sudo apt --assume-yes --no-install-recommends install openvpn oathtool resolvconf
+#      shell: bash
+#
+#    - name: Setup VPN config
+#      run: |
+#        echo "${{ inputs.ca }}" > ca.crt
+#        echo "${{ inputs.cert }}" > cert.crt
+#        echo "${{ inputs.cert-key }}" > cert.key
+#        echo "${{ inputs.username }}" > secret.txt
+#        echo "${{ inputs.password }}" >> secret.txt
+#        sed -i 's/AUTO_REPLACED_HOST/'"${{ inputs.host }}"'/g' ${{ inputs.ovpn-config }}
+#        sed -i 's/AUTO_REPLACED_PORT/'"${{ inputs.port }}"'/g' ${{ inputs.ovpn-config }}
+#      shell: bash
+#
+#    - name: Add VPN TOTP
+#      if: inputs.otp-hex != null
+#      run: |
+#        OTP=$(oathtool --totp ${{ inputs.otp-hex }})
+#        sed -i '$ s/$/'"$OTP"'/' secret.txt
+#      shell: bash
 
-    - name: Setup VPN config
-      run: |
-        echo "${{ inputs.ca }}" > ca.crt
-        echo "${{ inputs.cert }}" > cert.crt
-        echo "${{ inputs.cert-key }}" > cert.key
-        echo "${{ inputs.username }}" > secret.txt
-        echo "${{ inputs.password }}" >> secret.txt
-        sed -i 's/AUTO_REPLACED_HOST/'"${{ inputs.host }}"'/g' ${{ inputs.ovpn-config }}
-        sed -i 's/AUTO_REPLACED_PORT/'"${{ inputs.port }}"'/g' ${{ inputs.ovpn-config }}
-      shell: bash
-
-    - name: Add VPN TOTP
-      if: inputs.otp-hex != null
-      run: |
-        OTP=$(oathtool --totp ${{ inputs.otp-hex }})
-        sed -i '$ s/$/'"$OTP"'/' secret.txt
-      shell: bash
-
-    - name: Connect VPN
-      run: sudo openvpn --config ${{ inputs.ovpn-config }} --auth-user-pass secret.txt --log "vpn.log" --daemon
-      shell: bash
+#    - name: Connect VPN
+#      run: sudo openvpn --config ${{ inputs.ovpn-config }} --auth-user-pass secret.txt --log "vpn.log" --daemon
+#      shell: bash
 
     - name: Update resolvconf
       run: |
@@ -91,6 +91,31 @@ runs:
         sudo resolvconf -u
       shell: bash
 
-    - name: Wait for a VPN connection
-      run: timeout 60 until dig @${{ inputs.dns-server }} ${{ inputs.dns-server }} A +time=1; do sleep 2; done || exit 1
-      shell: bash
+#    - name: Wait for a VPN connection
+#      run: timeout 60 until dig @${{ inputs.dns-server }} ${{ inputs.dns-server }} A +time=1; do sleep 2; done || exit 1
+#      shell: bash
+
+    - name: Show VPN log
+      uses: webiny/action-post-run@3.0.0
+      with:
+        if: always()
+        run: sudo cat vpn.log
+
+    - name: Show VPN log
+      uses: webiny/action-post-run@3.0.0
+      with:
+        if: always()
+        run: echo "post run test"
+
+#    - name: Publish VPN log
+#      uses: webiny/action-post-run@3.0.0
+#      with:
+#        if: always()
+#        run: sudo chmod 777 vpn.log
+
+#    - name: Upload VPN logs
+#      uses: actions/upload-artifact@v3
+#      if: always()
+#      with:
+#        name: VPN logs
+#        path: vpn.log
