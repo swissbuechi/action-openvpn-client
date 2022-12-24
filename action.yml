@@ -1,8 +1,9 @@
 name: 'Connect OpenVPN'
 description: 'A GitHub Action for connecting to an OpenVPN SSL server '
 author: 'Raphael Büchi aka swissbuechi'
-icon: lock
-color: orange
+branding:
+  icon: lock
+  color: orange
 inputs:
   host:
     description: 'DNS or IP of OpenVPN server'
