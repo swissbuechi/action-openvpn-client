@@ -21,9 +21,9 @@ inputs:
   test-ping-ip-host:
     description: 'Host IP to ping for VPN connection test, DNS names not supported, use test-dns-host instead'
     required: false
-  # test-dns-host:
-  #   description: 'Internal hostname to resolve for VPN connection test'
-  #   required: false
+  test-dns-host:
+    description: 'Hostname to resolve via VPN DNS server for VPN connection test'
+    required: false
   port:
     description: 'Port of OpenVPN server'
     required: false
@@ -95,6 +95,11 @@ runs:
     - name: Wait for a VPN connection with default DNS test
       if: (inputs.dns-server != null) && (inputs.test-ping-ip-host == null)
       run: timeout 60 until dig @${{ inputs.dns-server }} ${{ inputs.dns-server }} A +time=1; do sleep 2; done || exit 1
+      shell: bash
+
+    - name: Wait for a VPN connection with custom DNS test
+      if: (inputs.dns-server != null) && (inputs.test-dns-host != null) && (inputs.test-ping-ip-host == null)
+      run: timeout 60 until dig @${{ inputs.dns-server }} ${{ inputs.test-dns-host }} A +time=1; do sleep 2; done || exit 1
       shell: bash
 
     - name: Wait for a VPN connection with default test ping ip host
