@@ -16,7 +16,7 @@ inputs:
     required: false
   ovpn-config:
     description: 'Path to .ovpn config'
-    require: false
+    required: false
     default: '.github/vpn/config.ovpn'
   test-ping-ip-host:
     description: 'Host IP to ping for VPN connection test, DNS names not supported, use test-dns-host instead'
