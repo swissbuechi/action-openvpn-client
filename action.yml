@@ -59,7 +59,7 @@ runs:
     - name: Install OpenVPN
       run: |
         sudo apt update
-        sudo apt --assume-yes --no-install-recommends install openvpn oathtool resolvconf timeout
+        sudo apt --assume-yes --no-install-recommends install openvpn oathtool resolvconf coreutils
       shell: bash
 
     - name: Setup VPN config
@@ -104,10 +104,12 @@ runs:
 
     - name: Show VPN log
       uses: webiny/action-post-run@3.0.0
+      if: always()
       with:
         run: sudo cat vpn.log
 
     - name: Kill VPN connection
       uses: webiny/action-post-run@3.0.0
+      if: always()
       with:
         run: sudo killall openvpn
