@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  VPN_DNS_SERVER: 10.33.33.1
+  VPN_DNS_SERVER: 192.168.1.1
 
 jobs:
   test:
@@ -22,30 +22,17 @@ jobs:
           host: ${{ secrets.VPN_HOST }}
           username: ${{ secrets.VPN_USERNAME }}
           password: ${{ secrets.VPN_PASSWORD }}
-          otp-hex: ${{ secrets.VPN_OTP }}
-          otp-timezone: 'Europe/Zurich'
+#          otp-hex: ${{ secrets.VPN_OTP }}
+#          otp-timezone: 'Europe/Zurich'
           dns-server: ${{ env.VPN_DNS_SERVER }}
           ca: ${{ secrets.VPN_CA_CRT }}
-          cert: ${{ secrets.VPN_CERT_CRT }}
-          cert-key: ${{ secrets.VPN_CERT_KEY }}
+#          cert: ${{ secrets.VPN_CERT_CRT }}
+#          cert-key: ${{ secrets.VPN_CERT_KEY }}
+          test-ping-ip-host: ${{ env.VPN_DNS_SERVER }}
+#          test-dns-host: google.ch
 
       - name: Test Ping
-        run: ping ${{ env.VPN_DNS_HOST }} -c5
+        run: ping ${{ env.VPN_DNS_SERVER }} -c5
         
       - name: Test DNS
-        run: dig dreikom.local
-
-      - name: Publish VPN log
-        if: always()
-        run: sudo chmod 777 vpn.log
-
-      - name: Upload VPN logs
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: VPN logs
-          path: vpn.log
-
-      - name: Kill VPN connection
-        if: always()
-        run: sudo killall openvpn
+        run: dig google.ch
