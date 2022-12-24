@@ -28,7 +28,7 @@ jobs:
           ca: ${{ secrets.VPN_CA_CRT }}
 #          cert: ${{ secrets.VPN_CERT_CRT }}
 #          cert-key: ${{ secrets.VPN_CERT_KEY }}
-          test-ping-ip-host: 192.168.1.2
+#          test-ping-ip-host: 192.168.1.2
 #          test-dns-host: google.ch
 
       - name: Test Ping
