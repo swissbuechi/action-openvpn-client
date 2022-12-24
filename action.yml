@@ -82,7 +82,7 @@ runs:
 
     - name: Connect VPN
       run: sudo openvpn --config ${{ inputs.ovpn-config }} --auth-user-pass secret.txt --log "vpn.log" --daemon
-      shell: bash#
+      shell: bash
 
     - name: Update DNS server
       if: (inputs.dns-server != null)
