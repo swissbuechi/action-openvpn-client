@@ -101,12 +101,12 @@ runs:
 
     - name: Wait for a VPN connection with default DNS test
       if: (inputs.dns-server != null) && (inputs.test-ping-ip-host == null) && (inputs.test-dns-host == null)
-      run: counter=0; until [ $counter -ge 10 ] || dig @${{ inputs.dns-server }} ${{ inputs.dns-server }} A +time=1; do counter=$((counter+1)); sleep 2; done; [ $counter -ge 10 ] && exit 1
+      run: counter=0; until [ $counter -ge 10 ]; do if dig @${{ inputs.dns-server }} ${{ inputs.dns-server }} A +time=1; then exit 0; fi; counter=$((counter+1)); sleep 2; done; exit 1
       shell: bash
 
     - name: Wait for a VPN connection with custom DNS test
       if: (inputs.dns-server != null) && (inputs.test-dns-host != null)
-      run: counter=0; until [ $counter -ge 10 ] || dig @${{ inputs.dns-server }} ${{ inputs.test-dns-host }} A +time=1; do counter=$((counter+1)); sleep 2; done; [ $counter -ge 10 ] && exit 1
+      run: counter=0; until [ $counter -ge 10 ]; do if dig @${{ inputs.dns-server }} ${{ inputs.test-dns-host }} A +time=1; then exit 0; fi; counter=$((counter+1)); sleep 2; done; exit 1
       shell: bash
 
     - name: Wait for a VPN connection with default test ping ip host
