@@ -34,18 +34,3 @@ jobs:
         
       - name: Test DNS
         run: dig dreikom.local
-
-#      - name: Kill VPN connection
-#        if: always()
-#        run: sudo killall openvpn
-
-#      - name: Publish VPN log
-#        if: always()
-#        run: sudo chmod 777 vpn.log
-#
-#      - name: Upload VPN logs
-#        uses: actions/upload-artifact@v3
-#        if: always()
-#        with:
-#          name: VPN logs
-#          path: vpn.log
