@@ -82,14 +82,18 @@ runs:
 
 #    - name: Connect VPN
 #      run: sudo openvpn --config ${{ inputs.ovpn-config }} --auth-user-pass secret.txt --log "vpn.log" --daemon
-#      shell: bash
+#      shell: bash#
 
-    - name: Update resolvconf
-      run: |
-        sudo chmod 777 /etc/resolvconf/resolv.conf.d/head
-        sudo echo "nameserver ${{ inputs.dns-server }}" >> /etc/resolvconf/resolv.conf.d/head
-        sudo resolvconf -u
+    - name: Test Connect VPN
+      run: echo "test vpn log content" > vpn.log
       shell: bash
+
+#    - name: Update resolvconf
+#      run: |
+#        sudo chmod 777 /etc/resolvconf/resolv.conf.d/head
+#        sudo echo "nameserver ${{ inputs.dns-server }}" >> /etc/resolvconf/resolv.conf.d/head
+#        sudo resolvconf -u
+#      shell: bash
 
 #    - name: Wait for a VPN connection
 #      run: timeout 60 until dig @${{ inputs.dns-server }} ${{ inputs.dns-server }} A +time=1; do sleep 2; done || exit 1
@@ -98,14 +102,7 @@ runs:
     - name: Show VPN log
       uses: webiny/action-post-run@3.0.0
       with:
-        if: always()
         run: sudo cat vpn.log
-
-    - name: Show VPN log
-      uses: webiny/action-post-run@3.0.0
-      with:
-        if: always()
-        run: echo "post run test"
 
 #    - name: Publish VPN log
 #      uses: webiny/action-post-run@3.0.0
