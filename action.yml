@@ -2,9 +2,6 @@ name: 'Connect OpenVPN'
 description: 'A GitHub Action for connecting to an OpenVPN SSL server '
 author: 'Raphael Büchi aka swissbuechi'
 inputs:
-  dns-server:
-    description: 'DNS server to use over the VPN'
-    required: true
   host:
     description: 'DNS or IP of OpenVPN server'
     required: true
@@ -14,13 +11,16 @@ inputs:
   password:
     description: 'VPN password'
     required: true
+  dns-server:
+    description: 'DNS server to use over the VPN'
+    required: false
   ovpn-config:
     description: 'Path to .ovpn config'
     require: false
     default: '.github/vpn/config.ovpn'
-  # test-ping-ip-host:
-  #   description: 'Host IP to ping for VPN connection test, DNS names not supported, use test-dns-host instead'
-  #   required: false
+  test-ping-ip-host:
+    description: 'Host IP to ping for VPN connection test, DNS names not supported, use test-dns-host instead'
+    required: false
   # test-dns-host:
   #   description: 'Internal hostname to resolve for VPN connection test'
   #   required: false
@@ -85,14 +85,21 @@ runs:
       shell: bash#
 
     - name: Update DNS server
+      if: (inputs.dns-server != null)
       run: |
         sudo chmod 777 /etc/resolvconf/resolv.conf.d/head
         sudo echo "nameserver ${{ inputs.dns-server }}" >> /etc/resolvconf/resolv.conf.d/head
         sudo resolvconf -u
       shell: bash
 
-    - name: Wait for a VPN connection
+    - name: Wait for a VPN connection with default DNS test
+      if: (inputs.dns-server != null) && (inputs.test-ping-ip-host == null)
       run: timeout 60 until dig @${{ inputs.dns-server }} ${{ inputs.dns-server }} A +time=1; do sleep 2; done || exit 1
+      shell: bash
+
+    - name: Wait for a VPN connection with default test ping ip host
+      if: inputs.test-ping-ip-host != null
+      run: timeout 60 until ping -c1 ${{ inputs.test-ping-ip-host }}; do sleep 2; done; do sleep 2; done || exit 1
       shell: bash
 
     - name: Show VPN log
