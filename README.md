@@ -6,4 +6,42 @@ Only works on ubuntu runner.
 ## Usage
 
 ```yaml
+name: Test VPN
+
+on:
+  workflow_dispatch:
+
+env:
+  VPN_DNS_SERVER: 192.168.1.1
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Connect VPN
+        uses: ./
+        with:
+          host: ${{ secrets.VPN_HOST }}
+          username: ${{ secrets.VPN_USERNAME }}
+          password: ${{ secrets.VPN_PASSWORD }}
+#          otp-hex: ${{ secrets.VPN_OTP }}
+#          otp-timezone: 'Europe/Zurich'
+          dns-server: ${{ env.VPN_DNS_SERVER }}
+          ca: ${{ secrets.VPN_CA_CRT }}
+#          cert: ${{ secrets.VPN_CERT_CRT }}
+#          cert-key: ${{ secrets.VPN_CERT_KEY }}
+          test-ping-ip-host: ${{ env.VPN_DNS_SERVER }}
+#          test-dns-host: google.ch
+
+      - name: Test Ping
+        run: ping ${{ env.VPN_DNS_SERVER }} -c5
+        
+      - name: Test DNS
+        run: dig google.ch
 ```

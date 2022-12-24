@@ -11,6 +11,10 @@ inputs:
   password:
     description: 'VPN password'
     required: true
+  logs:
+    description: 'Show VPN logs in console'
+    required: false
+    default: false
   dns-server:
     description: 'DNS server to use over the VPN'
     required: false
@@ -109,7 +113,7 @@ runs:
 
     - name: Show VPN log
       uses: webiny/action-post-run@3.0.0
-      if: always()
+      if: always() && (inputs.logs == true)
       with:
         run: sudo cat vpn.log
 
