@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  VPN_DNS_SERVER: 192.168.1.1
+  VPN_DNS_SERVER: 192.168.1.104
 
 jobs:
   test:
@@ -35,4 +35,4 @@ jobs:
         run: ping ${{ env.VPN_DNS_SERVER }} -c5
         
       - name: Test DNS
-        run: dig google.ch
+        run: dig aplbu01.home
