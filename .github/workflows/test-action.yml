@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  VPN_DNS_SERVER: 10.33.33.1
+  VPN_DNS_SERVER: 192.168.1.1
 
 jobs:
   test:
@@ -22,12 +22,13 @@ jobs:
           host: ${{ secrets.VPN_HOST }}
           username: ${{ secrets.VPN_USERNAME }}
           password: ${{ secrets.VPN_PASSWORD }}
-          otp-hex: ${{ secrets.VPN_OTP }}
-          otp-timezone: 'Europe/Zurich'
+#          otp-hex: ${{ secrets.VPN_OTP }}
+#          otp-timezone: 'Europe/Zurich'
           dns-server: ${{ env.VPN_DNS_SERVER }}
           ca: ${{ secrets.VPN_CA_CRT }}
-          cert: ${{ secrets.VPN_CERT_CRT }}
-          cert-key: ${{ secrets.VPN_CERT_KEY }}
+#          cert: ${{ secrets.VPN_CERT_CRT }}
+#          cert-key: ${{ secrets.VPN_CERT_KEY }}
+          test-ping-ip-host: ${{ env.VPN_DNS_SERVER }}
 
       - name: Test Ping
         run: ping ${{ env.VPN_DNS_HOST }} -c5
