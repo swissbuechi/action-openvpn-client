@@ -66,7 +66,8 @@ runs:
     - name: Install OpenVPN
       run: |
         sudo apt update
-        sudo apt --assume-yes --no-install-recommends install openvpn oathtool resolvconf
+#        sudo apt --assume-yes --no-install-recommends install openvpn oathtool resolvconf
+        sudo apt --assume-yes --no-install-recommends install openvpn oathtool openvpn-systemd-resolved
       shell: bash
 
     - name: Setup VPN config
@@ -91,13 +92,13 @@ runs:
       run: sudo openvpn --config ${{ inputs.ovpn-config }} --auth-user-pass secret.txt --log "vpn.log" --daemon
       shell: bash
 
-    - name: Update DNS server
-      if: (inputs.dns-server != null)
-      run: |
-        sudo chmod 777 /etc/resolvconf/resolv.conf.d/head
-        sudo echo "nameserver ${{ inputs.dns-server }}" >> /etc/resolvconf/resolv.conf.d/head
-        sudo resolvconf -u
-      shell: bash
+#    - name: Update DNS server
+#      if: (inputs.dns-server != null)
+#      run: |
+#        sudo chmod 777 /etc/resolvconf/resolv.conf.d/head
+#        sudo echo "nameserver ${{ inputs.dns-server }}" >> /etc/resolvconf/resolv.conf.d/head
+#        sudo resolvconf -u
+#      shell: bash
 
     - name: Wait for a VPN connection with default DNS test
       if: (inputs.dns-server != null) && (inputs.test-ping-ip-host == null) && (inputs.test-dns-host == null)
