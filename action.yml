@@ -99,7 +99,7 @@ runs:
 
     - name: Wait for a VPN connection with default test ping ip host
       if: inputs.test-ping-ip-host != null
-      run: timeout 60 until ping -c1 ${{ inputs.test-ping-ip-host }}; do sleep 2; done; do sleep 2; done || exit 1
+      run: timeout 60 until ping -c1 ${{ inputs.test-ping-ip-host }}; do sleep 2; done || exit 1
       shell: bash
 
     - name: Show VPN log
