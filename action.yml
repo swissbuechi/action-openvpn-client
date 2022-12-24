@@ -111,7 +111,7 @@ runs:
 
     - name: Wait for a VPN connection with default test ping ip host
       if: inputs.test-ping-ip-host != null
-      run: counter=0; until [ $counter -ge 10 ] || ping -c1 ${{ inputs.test-ping-ip-host }}; do counter=$((counter+1)); sleep 2; done; [ $counter -ge 10 ] && exit 1
+      run: counter=0; until [ $counter -ge 10 ]; do if ping -c1 ${{ inputs.test-ping-ip-host }}; then exit 0; fi; counter=$((counter+1)); sleep 2; done; exit 1
       shell: bash
 
     - name: Show VPN log
