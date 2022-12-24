@@ -5,6 +5,17 @@ Only works on ubuntu runner.
 
 ## Usage
 
+- Save your `.ovpn` config to  `.github/vpn/config.ovpn`
+- Replace `remote your-vpn-server.example 443` with `remote AUTO_REPLACED_HOST AUTO_REPLACED_PORT`
+- Replace `<ca>` with `ca ca.crt` and repeat for every cert or key
+  - `ca` -> `ca.crt`
+  - `cert` -> `cert.cer`
+  - `cert key` -> `cert.key`
+- Create all the secrets you need (also save certs as secrets)
+- Required options
+  - username
+  - password
+
 ```yaml
 name: Test VPN
 
@@ -34,7 +45,7 @@ jobs:
           otp-hex: ${{ secrets.VPN_OTP }} #optional
           otp-timezone: 'Europe/Zurich' #optional
           dns-server: ${{ env.VPN_DNS_SERVER }} #optional
-          ovpn-config: ${{ env.VPN_CONFIG}} #optional
+          ovpn-config: ${{ env.VPN_CONFIG}} #optional (default is .github/vpn/config.ovpn)
           ca: ${{ secrets.VPN_CA_CRT }} #optional
           cert: ${{ secrets.VPN_CERT_CRT }} #optional
           cert-key: ${{ secrets.VPN_CERT_KEY }} #optional
