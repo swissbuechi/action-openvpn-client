@@ -17,7 +17,7 @@ inputs:
   logs:
     description: 'Show VPN logs in console'
     required: false
-    default: false
+    default: 'false'
   dns-server:
     description: 'DNS server to use over the VPN'
     required: false
