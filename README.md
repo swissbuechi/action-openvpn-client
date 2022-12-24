@@ -28,16 +28,19 @@ jobs:
         uses: ./
         with:
           host: ${{ secrets.VPN_HOST }}
+          port: ${{ secrets.VPN_PORT }} #optional
           username: ${{ secrets.VPN_USERNAME }}
           password: ${{ secrets.VPN_PASSWORD }}
-#          otp-hex: ${{ secrets.VPN_OTP }}
-#          otp-timezone: 'Europe/Zurich'
-          dns-server: ${{ env.VPN_DNS_SERVER }}
-          ca: ${{ secrets.VPN_CA_CRT }}
-#          cert: ${{ secrets.VPN_CERT_CRT }}
-#          cert-key: ${{ secrets.VPN_CERT_KEY }}
-          test-ping-ip-host: ${{ env.VPN_DNS_SERVER }}
-#          test-dns-host: google.ch
+          otp-hex: ${{ secrets.VPN_OTP }} #optional
+          otp-timezone: 'Europe/Zurich' #optional
+          dns-server: ${{ env.VPN_DNS_SERVER }} #optional
+          ovpn-config: ${{ env.VPN_CONFIG}} #optional
+          ca: ${{ secrets.VPN_CA_CRT }} #optional
+          cert: ${{ secrets.VPN_CERT_CRT }} #optional
+          cert-key: ${{ secrets.VPN_CERT_KEY }} #optional
+          test-ping-ip-host: ${{ env.VPN_DNS_SERVER }} #optional
+          test-dns-host: google.ch #optional
+          logs: true #optional
 
       - name: Test Ping
         run: ping ${{ env.VPN_DNS_SERVER }} -c5
