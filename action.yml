@@ -58,7 +58,7 @@ runs:
   using: "composite"
   steps:
     - name: Set Timezone
-      uses: szenius/set-timezone@v1.1
+      uses: szenius/set-timezone@v1.2
       with:
         timezoneLinux: ${{ inputs.otp-timezone }}
       if: inputs.otp-timezone != null
